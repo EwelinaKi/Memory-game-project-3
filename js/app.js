@@ -1,18 +1,7 @@
-/*
- * Create a list that holds all of your cards
- */
-
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
-
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentIndex = array.length,
+        temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -21,9 +10,61 @@ function shuffle(array) {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
+
+function putCardsOnDeckFromShuffled(array) {
+
+    const elementOnDeck = Array.from(document.getElementsByClassName("card"));
+    let id = 0
+    elementOnDeck.forEach(element => {
+        element.classList.add("match"); //in future change it to "card down" to hide picture
+        element.childNodes[1].setAttribute("class", "fa");
+        element.childNodes[1].classList.add(array[id]);
+        id++
+    });
+}
+
+
+
+function restartGame() {
+    shuffle(cardsArray);
+    putCardsOnDeckFromShuffled(cardsArray);
+}
+
+// prepare array of card classes to shuffle
+cardsArray = ["fa-futbol-o", "fa-futbol-o", "fa-home", "fa-home", "fa-rocket", "fa-rocket", "fa-truck", "fa-truck", "fa-leaf", "fa-leaf",
+    "fa-puzzle-piece", "fa-puzzle-piece", "fa-binoculars", "fa-binoculars", "fa-birthday-cake", "fa-birthday-cake"
+];
+
+// caḍrsMap for tracking changes on dock for pair of cards: 0 - all cards down, 10 - one card's up, 20 - two cards up = match
+cardsMap = {
+    "fa-futbol-o": 0,
+    "fa-home": 0,
+    "fa-rocket": 0,
+    "fa-truck": 0,
+    "fa-leaf": 0,
+    "fa-puzzle-piece": 0,
+    "fa-binoculars": 0,
+    "fa-birthday-cake": 0
+};
+
+//add events listeners
+$(".restart").click(restartGame);
+
+console.log($(".restart"));
+console.log(document.getElementsByClassName("restart"));
+console.log($(".card"));
+
+// $(".card").addClass("dupa");
+
+
+
+
+restartGame();
+
+
+
 
 
 /*
