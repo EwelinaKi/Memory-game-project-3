@@ -44,7 +44,11 @@ function restartGame() {
     //hide all cards
     const listOfCards = Array.from($(".card"));
     listOfCards.forEach(resetAllCards); 
-    
+    moves = 0;
+    document.getElementById("moves").innerHTML = moves;
+    document.getElementById("star1").setAttribute("class", "fa fa-star");
+    document.getElementById("star2").setAttribute("class", "fa fa-star");
+    document.getElementById("star3").setAttribute("class", "fa fa-star");
 }
 
 function hideCards(element, index, array) {
@@ -58,6 +62,18 @@ function resetAllCards(element, index, array) {
         element.setAttribute("class", "card down");
     }
 }
+
+function updateScore(moves) {
+    document.getElementById("moves").innerHTML = moves;
+    if (moves === 16) {
+        document.getElementById("star1").setAttribute("class", "far fa-star");
+    } else if (moves === 22) {
+        document.getElementById("star2").setAttribute("class", "far fa-star");
+    } else if (moves === 30) {
+        document.getElementById("star3").setAttribute("class", "far fa-star");
+    }
+}
+
 
 function playerMove(event) {
 
@@ -80,6 +96,8 @@ function playerMove(event) {
                 card.setAttribute("class", "card up");
                 cardsMap.set(cardKey, tempValue + 10);
                 checkMove++;
+                totalMove++;
+                updateScore(totalMove);
                 //clear cardsMap for unmached cards
                 for (let [key] of cardsMap) {
                     if (cardsMap.get(key) === 10) {
@@ -115,8 +133,8 @@ let cardsArray = ["fa-futbol-o", "fa-futbol-o", "fa-home", "fa-home", "fa-rocket
 
 // caḍrsMap for tracking changes on dock for pair of cards: 0 - all cards down, 10 - one card's up, 20 - two cards up = match
 let cardsMap = new Map([
-    ["fa fa-futbol-o", 10],
-    ["fa fa-home", 10],
+    ["fa fa-futbol-o", 0],
+    ["fa fa-home", 0],
     ["fa fa-rocket", 0],
     ["fa fa-truck", 0],
     ["fa fa-leaf", 0],
