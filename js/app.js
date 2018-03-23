@@ -36,6 +36,8 @@ function sumValues(map) {
 }
 
 function restartGame() {
+    modal.style.display = "none";
+    totalMove = 0;
     //shuffle array and put new cards on deck
     shuffle(cardsArray);
     putCardsOnDeckFromShuffled(cardsArray);
@@ -97,10 +99,17 @@ function updateScore(moves) {
 
 function displayModal(moves) {
     endTime = new Date();
-    const fullStarsCount = Array.from(document.getElementsByClassName("fa fa-star")).length
-    const emptyStarsCount = Array.from(document.getElementsByClassName("far fa-star")).length
-    const totalTime = (endTime - startTime) / 60000;
-    document.getElementById("text").innerHTML = ("You earned " + "★".repeat(fullStarsCount) + "☆".repeat(emptyStarsCount) + "  with " + moves + " moves" + " in " + totalTime.toFixed(2) + " minutes.");
+    let stars1 = Array.from(document.getElementsByClassName("fa fa-star")).length
+    let stars2 = Array.from(document.getElementsByClassName("far fa-star")).length
+    const totalTime = (endTime - startTime);
+    const minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
+    stars1 = "★".repeat(stars1)
+    stars2 = "☆".repeat(stars2)
+    summaryText = `<p class="winnerStars">${stars1}${stars2}</p>
+    <p class="winnerStats">${moves} Moves</p>
+    <p class="winnerStats">Total time ${minutes}:${seconds}</p>`
+    document.getElementById("text").innerHTML = (summaryText)
     modal.style.display = "block";
 }
 
@@ -139,17 +148,16 @@ function playerMove(event) {
                     checkMove = 0;
                     Array.from(document.getElementsByClassName(cardKey))[0].parentElement.setAttribute("class", "card match")
                     Array.from(document.getElementsByClassName(cardKey))[1].parentElement.setAttribute("class", "card match")
+                    //check the winnings
+                    let sumOut = sumValues(cardsMap)
+                    if (sumOut >= 160) {
+                         displayModal(totalMove)
+                    }
                 }
             }
             //if "third round" = hides unmatched cards
             else if (checkMove === 2) {
                 checkMove = 0;
-                //check the winnings
-                let sumOut = sumValues(cardsMap)
-                if (sumOut >= 0) {
-                    // if (sumOut === 160) {
-                    displayModal(totalMove)
-                }
                 //hide cards
                 const listOfCards = Array.from($(".card"));
                 listOfCards.forEach(hideCards);

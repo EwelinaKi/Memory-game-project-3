@@ -128,10 +128,11 @@ h1 {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    height: 80%;
+    width: 60%;
+    height: auto;
     border: 15px solid black;
     border-radius: 15px;
+    text-align: center;
 }
 
 .close {
@@ -149,5 +150,38 @@ h1 {
 }
 
 #timer {
-    margin-right: 20px;
+    margin: 10px;
 }
+
+.winnerStars {
+    font-size:  4em;
+    color: #daa520;
+    margin: 10px auto;
+    text-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.winnerStats {
+    font-size: 1.3em;
+}
+
+#myModal h1 {
+    font-size: 3em;
+}
+
+button {
+    background-color: rgba(218,165,32, .5);
+    font-size:  1.5em;
+    padding: 15px;
+    border-radius: 15px;
+    border: 2px solid black;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+    color: black;
+    width: 80%;
+}
+
+button:hover {
+    background-color: goldenrod;
+
+
+}
+
