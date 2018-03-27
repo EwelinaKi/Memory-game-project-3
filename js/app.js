@@ -1,6 +1,5 @@
-const TWO_STARS = 16;
-const ONE_STAR = 22;
-const ZERO_STARS = 29;
+const TWO_STARS = 20;
+const ONE_STAR = 29;
 const WINNER = 160;
 const CARD_UP = 10;
 const PAIR_MATCHED = 20;
@@ -82,16 +81,12 @@ function updateScore(moves) {
         document.getElementById("star1").setAttribute("class", "far fa-star");
         starFull = "★★";
         starEmpty = "☆";
-    } else if (moves > ONE_STAR && moves <= ZERO_STARS) {
+    } else if (moves > ONE_STAR) {
         document.getElementById("star2").setAttribute("class", "far fa-star");
         starFull = "★"
         starEmpty = "☆☆";
-    } else if (moves > ZERO_STARS) {
-        document.getElementById("star3").setAttribute("class", "far fa-star");
-        starFull = ""
-        starEmpty = "☆☆☆";
-    }
-    return {
+    
+    } return {
         stars1: starFull,
         stars2: starEmpty
     }
