@@ -1,4 +1,11 @@
-var startTime, endTime;
+const TWO_STARS = 16;
+const ONE_STAR = 22;
+const ZERO_STARS = 29;
+const WINNER = 160;
+const CARD_UP = 10;
+const PAIR_MATCHED = 20;
+const FIRST_CARD_UP = 0;
+const SECOND_CARD_UP = 1;
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -16,108 +23,96 @@ function shuffle(array) {
 }
 
 function putCardsOnDeckFromShuffled(array) {
-
-    const elementOnDeck = Array.from(document.getElementsByClassName("card"));
-    let id = 0
-    elementOnDeck.forEach(element => {
+    const elementsOnDeck = Array.from(document.getElementsByClassName("card"));
+    elementsOnDeck.forEach((element, index) => {
         element.classList.add("down");
         element.childNodes[1].setAttribute("class", "fa");
-        element.childNodes[1].classList.add(array[id]);
-        id++
+        element.childNodes[1].classList.add(array[index]);
     });
 }
 
 function sumValues(map) {
-    let sum = 0;
-    for (let [key, value] of map) {
-        sum = sum + map.get(key)
-    }
-    return sum;
+    return Array.from(map.values()).reduce((a, b) => a + b);
 }
 
 function restartGame() {
     modal.style.display = "none";
-    totalMove = 0;
-    //shuffle array and put new cards on deck
-    shuffle(cardsArray);
-    putCardsOnDeckFromShuffled(cardsArray);
-    //reset all values in cardsMAP
-    for (let [key] of cardsMap) {
-        cardsMap.set(key, 0);
-    }
     //reset numbers of moves
     moves = 0;
-    checkMove = 0;
-    //hide all cards
-    const listOfCards = Array.from($(".card"));
-    listOfCards.forEach(resetAllCards);
+    checkMove = FIRST_CARD_UP;
+    totalMove = 0;
+    //reset all values in cardsMap
+    cardsMap.forEach((v, k, m) => m.set(k, 0));
     //reset stars
     document.getElementById("moves").innerHTML = moves;
     document.getElementById("star1").setAttribute("class", "fa fa-star");
     document.getElementById("star2").setAttribute("class", "fa fa-star");
     document.getElementById("star3").setAttribute("class", "fa fa-star");
+    //shuffle cards and puts them on deck
+    shuffle(cardsArray);
+    putCardsOnDeckFromShuffled(cardsArray);
+    //hide all cards
+    const listOfCards = Array.from($(".card"));
+    listOfCards.forEach(v => v.setAttribute("class", "card down"));
     //set new timer
     startTime = new Date();
-
-    // Update the count down every 1 second
-    var x = setInterval(function () {
+    counter = setInterval(function () {
         // Get actual time
         const now = new Date().getTime();
         // Find the distance between start game and now
         const distance = now - startTime;
         // Time calculations for days, hours, minutes and seconds
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const seconds = formatToTwoDigits(Math.floor((distance % (1000 * 60)) / 1000));
         // Output the result
         document.getElementById("timer").innerHTML = minutes + ":" + seconds;
     }, 1000);
-    return x
 }
 
-function hideCards(element, index, array) {
-    if (element.classList.contains("up")) {
-        element.setAttribute("class", "card down");
-    }
-}
-
-function resetAllCards(element, index, array) {
-    if (element.classList.contains("up") || element.classList.contains("match")) {
-        element.setAttribute("class", "card down");
-    }
+function formatToTwoDigits(numberToBeFormatted) {
+    return numberToBeFormatted.toLocaleString(undefined, {
+        minimumIntegerDigits: 2
+    });
 }
 
 function updateScore(moves) {
-    document.getElementById("moves").innerHTML = moves;
-    if (moves === 16) {
+    let starFull = "★★★";
+    let starEmpty = "";
+    if (moves > TWO_STARS && moves <= ONE_STAR) {
         document.getElementById("star1").setAttribute("class", "far fa-star");
-    } else if (moves === 22) {
+        starFull = "★★";
+        starEmpty = "☆";
+    } else if (moves > ONE_STAR && moves <= ZERO_STARS) {
         document.getElementById("star2").setAttribute("class", "far fa-star");
-    } else if (moves === 30) {
+        starFull = "★"
+        starEmpty = "☆☆";
+    } else if (moves > ZERO_STARS) {
         document.getElementById("star3").setAttribute("class", "far fa-star");
+        starFull = ""
+        starEmpty = "☆☆☆";
+    }
+    return {
+        stars1: starFull,
+        stars2: starEmpty
     }
 }
 
-function displayModal(moves) {
+function displayModal(moves, stars) {
+    // stop counter
+    clearInterval(counter);
     endTime = new Date();
-    let stars1 = Array.from(document.getElementsByClassName("fa fa-star")).length
-    let stars2 = Array.from(document.getElementsByClassName("far fa-star")).length
     const totalTime = (endTime - startTime);
     const minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
-    stars1 = "★".repeat(stars1)
-    stars2 = "☆".repeat(stars2)
-    summaryText = `<p class="winnerStars">${stars1}${stars2}</p>
+    const seconds = formatToTwoDigits(Math.floor((totalTime % (1000 * 60)) / 1000));
+    summaryText = `<p class="winnerStars">${stars.stars1}${stars.stars2}</p>
     <p class="winnerStats">${moves} Moves</p>
     <p class="winnerStats">Total time ${minutes}:${seconds}</p>`
     document.getElementById("text").innerHTML = (summaryText)
     modal.style.display = "block";
 }
 
-
 function playerMove(event) {
-
     let card = event.target;
-
     //prevent click on picture
     if (event.target.classList.contains("card")) {
         //prevent action on card which is up
@@ -126,41 +121,46 @@ function playerMove(event) {
             const cardKey = card.firstElementChild.classList.value;
             let tempValue = cardsMap.get(cardKey);
             //if first round
-            if (checkMove === 0) {
+            if (checkMove === FIRST_CARD_UP) {
                 card.setAttribute("class", "card up");
-                cardsMap.set(cardKey, tempValue + 10);
+                cardsMap.set(cardKey, tempValue + CARD_UP);
                 checkMove++;
                 // if second round
-            } else if (checkMove === 1) {
+            } else if (checkMove === SECOND_CARD_UP) {
                 card.setAttribute("class", "card up");
-                cardsMap.set(cardKey, tempValue + 10);
+                cardsMap.set(cardKey, tempValue + CARD_UP);
                 checkMove++;
                 totalMove++;
-                updateScore(totalMove);
-                //clear cardsMap for unmached cards
-                for (let [key] of cardsMap) {
-                    if (cardsMap.get(key) === 10) {
-                        cardsMap.set(key, 0)
+                document.getElementById("moves").innerHTML = totalMove;
+                stars = updateScore(totalMove);
+                //clear cardsMap for unmached cards  
+                cardsMap.forEach((v, k, m) => {
+                    if (m.get(k) === CARD_UP) {
+                        m.set(k, 0);
                     }
-                }
-                if (cardsMap.get(cardKey) === 20) {
+                });
+                if (cardsMap.get(cardKey) === PAIR_MATCHED) {
                     // if pair has been exposes change its style and immediately go to next move
                     checkMove = 0;
                     Array.from(document.getElementsByClassName(cardKey))[0].parentElement.setAttribute("class", "card match")
                     Array.from(document.getElementsByClassName(cardKey))[1].parentElement.setAttribute("class", "card match")
                     //check the winnings
                     let sumOut = sumValues(cardsMap)
-                    if (sumOut >= 160) {
-                         displayModal(totalMove)
+                    if (sumOut >= WINNER) {
+                        displayModal(totalMove, stars)
                     }
+                } else {
+                    setTimeout(() => {
+                        checkMove = FIRST_CARD_UP;
+                        //hide cards
+                        const listOfCards = Array.from($(".card"));
+                        listOfCards.forEach((v, i, a) => {
+                            if (v.classList.contains("up")) {
+                                v.setAttribute("class", "card down");
+                            }
+                        });
+                    }, 1500);
                 }
-            }
-            //if "third round" = hides unmatched cards
-            else if (checkMove === 2) {
-                checkMove = 0;
-                //hide cards
-                const listOfCards = Array.from($(".card"));
-                listOfCards.forEach(hideCards);
             }
         }
     }
@@ -183,25 +183,22 @@ let cardsMap = new Map([
     ["fa fa-birthday-cake", 0]
 ]);
 
-//the variable which counts rounds per move
+//timer
+let counter;
+
+//variable which counts rounds per move
 let checkMove = 0;
 
-//the variable which counts all rounds made by player
+//variable which counts all rounds made by player
 let totalMove = 0;
 
-// Get the <span> element that closes the modal
-let span = document.getElementsByClassName("close")[0];
+const closeModal = document.getElementsByClassName("close")[0];
+const modal = document.getElementById('victory');
 
-// Get the modal
-let modal = document.getElementById('myModal');
+restartGame();
 
 //add events listeners:
-restartGame();
 $(".restart").click(restartGame);
-
-const card = $(".card");
-card.click(playerMove);
-
-span.onclick = function () {
-    modal.style.display = "none";
-}
+$(".card").click(playerMove);
+$(".close").click(() => modal.style.display = "none");
+$("#again").click(restartGame);
