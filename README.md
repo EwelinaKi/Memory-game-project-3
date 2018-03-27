@@ -1,20 +1,21 @@
-# Memory Game Project
+# Memory Card Game
+Project for the Google Scholarship Programm: Module 3.
 
-## Table of Contents
+![Screenshot](/img/screen.png)
 
-* [Instructions](#instructions)
-* [Contributing](#contributing)
+## Technologies
+JavaScript, CSS, HTML.
 
-## Instructions
+## Dependecies
+[Font Awesome](https://fontawesome.com/), [jQuery](https://jquery.com/)
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+## ToDo
+- [ ] Add CSS animations
+- [ ] Add new images
+- [ ] Add variable number of cards
 
-To get started, open `js/app.js` and start building out the app's functionality
+## Contribution
+This project was #madewithudacity and #googleudacityscholars.
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
-
-## Contributing
-
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
-
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+## License
+The MIT License (MIT)
