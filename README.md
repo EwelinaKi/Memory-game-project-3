@@ -3,6 +3,9 @@ Project for the Google Scholarship Programm: Module 3.
 
 ![Screenshot](/img/screen.png)
 
+## How to run
+Download or clone repository and run index.html. You can also see [live demo](https://ewelinaki.github.io/UDACITY-Memory-Game/)
+
 ## Technologies
 JavaScript, CSS, HTML.
 
